@@ -43,7 +43,9 @@
 	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<!-- Location Usage Description -->
-    <key>NSLocationAlwaysAndWhenInUsageDescription</key>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <key>NSLocationUsageDescription</key>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 </dict>
