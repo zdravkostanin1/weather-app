@@ -14,7 +14,6 @@ class WeatherService {
         throw Exception('Failed to get weather');
       }
     } catch (e) {
-      print('An exception occurred: $e');
       throw Exception('An exception occurred: $e');
     }
   }
