@@ -42,7 +42,8 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
+	<!-- Location Usage Description -->
+    <key>NSLocationAlwaysAndWhenInUsageDescription</key>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 </dict>
