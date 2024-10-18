@@ -1,3 +1,4 @@
+import 'package:anim_search_bar/anim_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   double latitude = 0.0;
   double longitude = 0.0;
   bool isLightTheme = true;
+  late Future<List<WeatherData>> _weekForecast;
 
   getWeather() async {
     Position position = await LocationService.getCurrentLocation();
@@ -28,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WeatherService.getWeather(latitude, longitude).then((value) {
       setState(() {
         weatherData = value;
+        _weekForecast = WeatherService.get5DayForecast(latitude, longitude);
       });
     });
   }
@@ -41,28 +44,46 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: isLightTheme ? ThemeData.light() : ThemeData.dark(),
       home: Scaffold(
-        appBar: AppBar(
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                isLightTheme ? Icons.dark_mode : Icons.brightness_6,
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(60.0),
+          child: Stack(children: [
+            AppBar(
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    isLightTheme ? Icons.dark_mode : Icons.brightness_6,
+                    color: isLightTheme ? Colors.black : Colors.white,
+                    size: 40.0,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      isLightTheme = !isLightTheme;
+                    });
+                  },
+                ),
+              ],
+            ),
+            Positioned(
+              top: 60,
+              left: 20,
+              right: 20,
+              bottom: 0,
+              child: AnimSearchBar(
+                // textFieldColor: isLightTheme ? Colors.white : Colors.white,
+                textFieldIconColor: isLightTheme ? Colors.white : Colors.black,
+                searchIconColor: isLightTheme ? Colors.white : Colors.black,
                 color: isLightTheme ? Colors.black : Colors.white,
-                size: 30.0,
+                helpText: 'Search for a city',
+                width: 370,
+                textController: TextEditingController(),
+                onSuffixTap: () {},
+                onSubmitted: (value) {},
               ),
-              onPressed: () {
-                setState(() {
-                  isLightTheme = !isLightTheme;
-                });
-              },
-            )
-          ],
-          leading: Icon(
-            Icons.search,
-            color: isLightTheme ? Colors.black : Colors.white,
-            size: 30.0,
-          ),
+            ),
+          ]),
         ),
         body: weatherData == null
             ? const Center(
@@ -130,7 +151,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 10.0),
                     RoundedContainer(
-                      decorationColor: isLightTheme ? Colors.black : Colors.white,
+                      decorationColor:
+                          isLightTheme ? Colors.black : Colors.white,
                       children: [
                         IntrinsicHeight(
                           child: Row(
@@ -171,9 +193,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                               VerticalDivider(
-                                color: isLightTheme
-                                    ? Colors.white
-                                    : Colors.black,
+                                color:
+                                    isLightTheme ? Colors.white : Colors.black,
                                 thickness: 2.0,
                               ),
                               Padding(
@@ -211,9 +232,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                               VerticalDivider(
-                                color: isLightTheme
-                                    ? Colors.white
-                                    : Colors.black,
+                                color:
+                                    isLightTheme ? Colors.white : Colors.black,
                                 thickness: 2.0,
                               ),
                               Padding(
@@ -271,8 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 20.0),
                     FutureBuilder<List<WeatherData>>(
-                      future:
-                          WeatherService.get5DayForecast(latitude, longitude),
+                      future: _weekForecast,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -296,7 +315,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 WeatherData dayWeather = forecast[index];
                                 return Container(
                                   width: 100.0,
-                                  margin: const EdgeInsets.only(left: 20.0),
+                                  margin: const EdgeInsets.only(
+                                      left: 22.0, right: 22.0),
                                   decoration: BoxDecoration(
                                     color: isLightTheme
                                         ? Colors.black
