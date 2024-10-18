@@ -170,8 +170,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ],
                                 ),
                               ),
-                              const VerticalDivider(
-                                color: Colors.white,
+                              VerticalDivider(
+                                color: isLightTheme
+                                    ? Colors.white
+                                    : Colors.black,
                                 thickness: 2.0,
                               ),
                               Padding(
@@ -208,8 +210,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ],
                                 ),
                               ),
-                              const VerticalDivider(
-                                color: Colors.white,
+                              VerticalDivider(
+                                color: isLightTheme
+                                    ? Colors.white
+                                    : Colors.black,
                                 thickness: 2.0,
                               ),
                               Padding(
