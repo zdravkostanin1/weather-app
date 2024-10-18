@@ -8,7 +8,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Weather app',
+      title: 'A beautiful weather app',
       home: HomeScreen(),
     );
   }
