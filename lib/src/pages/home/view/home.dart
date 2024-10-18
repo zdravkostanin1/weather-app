@@ -23,8 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Position position = await LocationService.getCurrentLocation();
     latitude = position.latitude;
     longitude = position.longitude;
-    WeatherService.getWeather(latitude, longitude)
-        .then((value) {
+    WeatherService.getWeather(latitude, longitude).then((value) {
       setState(() {
         weatherData = value;
       });
@@ -58,161 +57,195 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: weatherData == null
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Center(
-                  child: Text(
-                    '📍 ${weatherData?.cityName}',
-                    style: GoogleFonts.titilliumWeb(
-                      fontSize: 40.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 5.0),
-                Center(
-                  child: Text(
-                    DateFormat('MMMM d, yyyy').format(DateTime.now()),
-                    style: GoogleFonts.roboto(
-                      fontSize: 17.0,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20.0),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 50.0,
-                    right: 30.0,
-                    top: 20.0,
-                  ),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/sunny.png',
-                        width: 200.0,
-                        height: 200.0,
-                      ),
-                      const SizedBox(height: 20.0),
-                      Column(
-                        children: [
-                          Text(
-                            '${weatherData?.temp.toStringAsFixed(2)}°C',
-                            style: GoogleFonts.roboto(
-                              fontSize: 60.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            weatherData?.main ?? '',
-                            style: GoogleFonts.roboto(
-                              fontSize: 25.0,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20.0),
-                RoundedContainer(
-                  children: [
-                    IntrinsicHeight(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Column(
-                            children: [
-                              Text(
-                                '${weatherData?.temp.toStringAsFixed(2)}°C',
-                                style: GoogleFonts.roboto(
-                                  fontSize: 25.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                'Temp',
-                                style: GoogleFonts.roboto(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const VerticalDivider(
-                            color: Colors.black,
-                            thickness: 1.0,
-                          ),
-                          Column(
-                            children: [
-                              Text(
-                                '${weatherData?.wind} km/h',
-                                style: GoogleFonts.roboto(
-                                  fontSize: 25.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                'Wind',
-                                style: GoogleFonts.roboto(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const VerticalDivider(
-                            color: Colors.black,
-                            thickness: 1.0,
-                          ),
-                          Column(
-                            children: [
-                              Text(
-                                '${weatherData?.humidity}%',
-                                style: GoogleFonts.roboto(
-                                  fontSize: 25.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                'Humidity',
-                                style: GoogleFonts.roboto(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 30.0),
-                Padding(
-                  padding: const EdgeInsets.only(left: 50.0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
+          ? const Center(
+              child: CircularProgressIndicator(
+              color: Colors.black,
+            ))
+          : SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Center(
                     child: Text(
-                      'Weekly forecast',
-                      style: GoogleFonts.roboto(
-                        fontSize: 20.0,
+                      '📍 ${weatherData?.cityName}',
+                      style: GoogleFonts.titilliumWeb(
+                        fontSize: 40.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20.0),
-                Padding(
-                  padding: const EdgeInsets.only(left: 28.0),
-                  child: FutureBuilder<List<WeatherData>>(
+                  const SizedBox(height: 5.0),
+                  Center(
+                    child: Text(
+                      DateFormat('MMMM d, yyyy').format(DateTime.now()),
+                      style: GoogleFonts.roboto(
+                        fontSize: 17.0,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20.0),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 50.0,
+                      right: 30.0,
+                      top: 20.0,
+                    ),
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'assets/images/sunny.png',
+                          width: 200.0,
+                          height: 150.0,
+                        ),
+                        const SizedBox(height: 20.0),
+                        Column(
+                          children: [
+                            Text(
+                              '${weatherData?.temp.toStringAsFixed(0)}°C',
+                              style: GoogleFonts.roboto(
+                                fontSize: 70.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              weatherData?.main ?? '',
+                              style: GoogleFonts.roboto(
+                                fontSize: 25.0,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10.0),
+                  RoundedContainer(
+                    children: [
+                      IntrinsicHeight(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  const Icon(
+                                    Icons.thermostat_outlined,
+                                    color: Colors.white,
+                                    size: 30.0,
+                                  ),
+                                  Text(
+                                    '${weatherData?.temp.toStringAsFixed(2)}°C',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Temp',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const VerticalDivider(
+                              color: Colors.white,
+                              thickness: 2.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  const Icon(
+                                    Icons.waves_outlined,
+                                    color: Colors.white,
+                                    size: 30.0,
+                                  ),
+                                  Text(
+                                    '${weatherData?.wind} km/h',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Wind',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const VerticalDivider(
+                              color: Colors.white,
+                              thickness: 2.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  const Icon(
+                                    Icons.water_drop_outlined,
+                                    color: Colors.white,
+                                    size: 30.0,
+                                  ),
+                                  Text(
+                                    '${weatherData?.humidity}%',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Humidity',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30.0),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25.0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Weekly forecast',
+                        style: GoogleFonts.roboto(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20.0),
+                  FutureBuilder<List<WeatherData>>(
                     future: WeatherService.get5DayForecast(latitude, longitude),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
-                          child: CircularProgressIndicator(),
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                          ),
                         );
                       } else if (snapshot.hasError) {
                         return Center(
@@ -231,10 +264,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 width: 100.0,
                                 margin: const EdgeInsets.only(left: 20.0),
                                 decoration: BoxDecoration(
-                                  color: Colors.transparent,
+                                  color: Colors.black,
                                   borderRadius: BorderRadius.circular(10.0),
                                   border: Border.all(
-                                    width: 2,
+                                    width: 1,
                                     color: Colors.black,
                                     style: BorderStyle.solid,
                                   ),
@@ -247,6 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       style: GoogleFonts.roboto(
                                         fontSize: 20.0,
                                         fontWeight: FontWeight.bold,
+                                        color: Colors.white,
                                       ),
                                     ),
                                     const SizedBox(height: 10.0),
@@ -261,6 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       style: GoogleFonts.roboto(
                                         fontSize: 20.0,
                                         fontWeight: FontWeight.bold,
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ],
@@ -270,12 +305,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                       } else {
-                        return const Center(child: Text('No weather data available'));
+                        return const Center(
+                          child: Text('No weather data available'),
+                        );
                       }
                     },
                   ),
-                ),
-              ],
+                  const SizedBox(height: 30.0),
+                ],
+              ),
             ),
     );
   }
