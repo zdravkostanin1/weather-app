@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:weather_app/src/models/weather_data.dart';
 
 class WeatherService {
+
+  /// A method to get the current weather based on the user's location
   static Future<WeatherData> getWeather(double latitude, double longitude) async {
     final response = await http.get(Uri.parse('http://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=af234654c5eb2a7d6365d343588bf317'));
 
@@ -19,6 +21,7 @@ class WeatherService {
     }
   }
 
+  /// A method to get the weather suggestions based on the user's query in the search bar
   static Future<List<Map<String, dynamic>>> getCitySuggestions(String query) async {
     final response = await http.get(Uri.parse(
       'http://api.openweathermap.org/geo/1.0/direct?q=$query&limit=5&appid=af234654c5eb2a7d6365d343588bf317',
@@ -32,6 +35,7 @@ class WeatherService {
     }
   }
 
+  /// A method to get the weather based on the user's query in the search bar
   static Future<WeatherData> getWeatherByCity(String cityName) async {
     final response = await http.get(Uri.parse(
       'http://api.openweathermap.org/data/2.5/weather?q=$cityName&appid=af234654c5eb2a7d6365d343588bf317',
@@ -49,6 +53,7 @@ class WeatherService {
     }
   }
 
+  /// A method to get the 5-day forecast based on the user's location
   static Future<List<WeatherData>> get5DayForecast(double latitude, double longitude) async {
     final response = await http.get(Uri.parse(
         'https://api.openweathermap.org/data/2.5/forecast?lat=$latitude&lon=$longitude&units=metric&appid=af234654c5eb2a7d6365d343588bf317'));
@@ -72,6 +77,8 @@ class WeatherService {
             main: item['weather'][0]['main'],
             icon: item['weather'][0]['icon'],
             day: DateFormat('EEE').format(dateTime),
+            longitude: json['city']['coord']['lon'],
+            latitude: json['city']['coord']['lat'],
           );
           dailyForecasts[date] = weatherData;
         }

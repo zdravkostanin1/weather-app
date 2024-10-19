@@ -123,8 +123,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   WeatherService.getWeatherByCity(value).then((weather) {
                     setState(() {
                       weatherData = weather;
-                      _weekForecast =
-                          WeatherService.get5DayForecast(latitude, longitude);
+                      // Update latitude and longitude for the selected city
+                      latitude = weather.latitude;  // Make sure you add latitude to your WeatherData model
+                      longitude = weather.longitude;  // Make sure you add longitude to your WeatherData model
+                      // Fetch the 5-day forecast using the new city's coordinates
+                      _weekForecast = WeatherService.get5DayForecast(latitude, longitude);
                     });
                     _searchController.clear(); /// Clear search bar after fetching weather
                     setState(() {
@@ -149,8 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () {
                       _searchController.text = city['name'];
                       /// Fetch weather for the selected city
-                      WeatherService.getWeatherByCity(city['name'])
-                          .then((weather) {
+                      WeatherService.getWeatherByCity(city['name']).then((weather) {
                         setState(() {
                           weatherData = weather;
                           _weekForecast = WeatherService.get5DayForecast(latitude, longitude);
