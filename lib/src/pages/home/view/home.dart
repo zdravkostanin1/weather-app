@@ -21,6 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
   double longitude = 0.0;
   bool isLightTheme = true;
   late Future<List<WeatherData>> _weekForecast;
+  final TextEditingController _searchController = TextEditingController();
+  List<Map<String, dynamic>> citySuggestions = [];
+  bool isLoadingSuggestions = false;
 
   getWeather() async {
     Position position = await LocationService.getCurrentLocation();
@@ -35,10 +38,44 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _onSearchControllerChanged() async {
+    final value = _searchController.text;
+
+    if (value.isNotEmpty) {
+      setState(() {
+        isLoadingSuggestions = true;
+      });
+      try {
+        final suggestions = await WeatherService.getCitySuggestions(value);
+        setState(() {
+          citySuggestions = suggestions;
+          isLoadingSuggestions = false;
+        });
+      } catch (e) {
+        setState(() {
+          citySuggestions = [];
+          isLoadingSuggestions = false;
+        });
+      }
+    } else {
+      setState(() {
+        citySuggestions = [];
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     getWeather();
+    _searchController.addListener(_onSearchControllerChanged);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _searchController.removeListener(_onSearchControllerChanged);
+    _searchController.dispose();
   }
 
   @override
@@ -72,17 +109,58 @@ class _HomeScreenState extends State<HomeScreen> {
               right: 20,
               bottom: 0,
               child: AnimSearchBar(
-                // textFieldColor: isLightTheme ? Colors.white : Colors.white,
-                textFieldIconColor: isLightTheme ? Colors.white : Colors.black,
-                searchIconColor: isLightTheme ? Colors.white : Colors.black,
-                color: isLightTheme ? Colors.black : Colors.white,
+                textController: _searchController,
                 helpText: 'Search for a city',
                 width: 370,
-                textController: TextEditingController(),
-                onSuffixTap: () {},
-                onSubmitted: (value) {},
+                onSuffixTap: () {
+                  _searchController.clear();
+                  setState(() {
+                    citySuggestions.clear(); /// Clear suggestions when search is cleared
+                  });
+                },
+                onSubmitted: (value) {
+                  /// When the user submits, fetch weather for the selected city
+                  WeatherService.getWeatherByCity(value).then((weather) {
+                    setState(() {
+                      weatherData = weather;
+                      _weekForecast =
+                          WeatherService.get5DayForecast(latitude, longitude);
+                    });
+                    _searchController.clear(); /// Clear search bar after fetching weather
+                    setState(() {
+                      citySuggestions.clear(); /// Clear city suggestions
+                    });
+                  });
+                },
               ),
             ),
+            if (citySuggestions.isNotEmpty)
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: citySuggestions.length,
+                itemBuilder: (context, index) {
+                  final city = citySuggestions[index];
+                  return ListTile(
+                    title: Center(
+                      child: Text(
+                        '${city['name']}, ${city['country']}',
+                      ),
+                    ),
+                    onTap: () {
+                      _searchController.text = city['name'];
+                      /// Fetch weather for the selected city
+                      WeatherService.getWeatherByCity(city['name'])
+                          .then((weather) {
+                        setState(() {
+                          weatherData = weather;
+                          _weekForecast = WeatherService.get5DayForecast(latitude, longitude);
+                          citySuggestions.clear(); /// Clear suggestions after selecting
+                        });
+                      });
+                    },
+                  );
+                },
+              ),
           ]),
         ),
         body: weatherData == null

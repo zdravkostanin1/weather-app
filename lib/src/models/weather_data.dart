@@ -20,20 +20,8 @@ class WeatherData {
   });
 
   factory WeatherData.fromJson(Map<String, dynamic> json) {
-    /// Check if 'dt' field exists to determine if it's daily data
-    if (json.containsKey('dt') && json.containsKey('temp') && json['temp'] is Map) {
-      /// Parsing daily forecast data
-      DateTime date = DateTime.fromMillisecondsSinceEpoch(json['dt'] * 1000);
-      String day = DateFormat('EEE').format(date); // e.g., 'Mon', 'Tue'
-
-      return WeatherData(
-        temp: json['temp']['day'].toDouble(),
-        main: json['weather'][0]['main'],
-        icon: json['weather'][0]['icon'],
-        day: day,
-      );
-    } else {
-      /// Parsing current weather data
+    /// Parsing current weather data
+    if (json.containsKey('name')) {
       return WeatherData(
         cityName: json['name'],
         temp: json['main']['temp'].toDouble() - 273.15,
@@ -41,6 +29,17 @@ class WeatherData {
         humidity: json['main']['humidity'],
         wind: json['wind']['speed'].toString(),
         icon: json['weather'][0]['icon'],
+      );
+    } else {
+      /// Parsing forecast data
+      DateTime date = DateTime.fromMillisecondsSinceEpoch(json['dt'] * 1000);
+      String day = DateFormat('EEE').format(date); /// e.g., 'Mon', 'Tue'
+
+      return WeatherData(
+        temp: json['main']['temp'].toDouble(),
+        main: json['weather'][0]['main'],
+        icon: json['weather'][0]['icon'],
+        day: day,
       );
     }
   }

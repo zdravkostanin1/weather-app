@@ -19,6 +19,36 @@ class WeatherService {
     }
   }
 
+  static Future<List<Map<String, dynamic>>> getCitySuggestions(String query) async {
+    final response = await http.get(Uri.parse(
+      'http://api.openweathermap.org/geo/1.0/direct?q=$query&limit=5&appid=af234654c5eb2a7d6365d343588bf317',
+    ));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> json = jsonDecode(response.body);
+      return json.cast<Map<String, dynamic>>();
+    } else {
+      throw Exception('Failed to load city suggestions');
+    }
+  }
+
+  static Future<WeatherData> getWeatherByCity(String cityName) async {
+    final response = await http.get(Uri.parse(
+      'http://api.openweathermap.org/data/2.5/weather?q=$cityName&appid=af234654c5eb2a7d6365d343588bf317',
+    ));
+
+    try {
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        return WeatherData.fromJson(json);
+      } else {
+        throw Exception('Failed to get weather for $cityName');
+      }
+    } catch (e) {
+      throw Exception('An exception occurred: $e');
+    }
+  }
+
   static Future<List<WeatherData>> get5DayForecast(double latitude, double longitude) async {
     final response = await http.get(Uri.parse(
         'https://api.openweathermap.org/data/2.5/forecast?lat=$latitude&lon=$longitude&units=metric&appid=af234654c5eb2a7d6365d343588bf317'));
