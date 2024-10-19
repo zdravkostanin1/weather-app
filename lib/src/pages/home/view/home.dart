@@ -236,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         children: [
                           Image.asset(
-                            'assets/images/sunny.png',
+                            WeatherService.getWeatherImage(weatherData?.main),
                             width: 200.0,
                             height: 150.0,
                           ),

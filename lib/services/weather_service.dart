@@ -91,4 +91,21 @@ class WeatherService {
       throw Exception('Error ${response.statusCode}: $errorMessage');
     }
   }
+
+  static String getWeatherImage(String? weatherCondition) {
+    switch (weatherCondition?.toLowerCase()) {
+      case 'clear':
+        return 'assets/images/sunny.png';
+      case 'clouds':
+        return 'assets/images/cloudy.png';
+      case 'rain':
+        return 'assets/images/rainy.png';
+      case 'snow':
+        return 'assets/images/snowy.png';
+      case 'thunderstorm':
+        return 'assets/images/thunderstorm.png';
+      default:
+        return 'assets/images/default.png'; // Fallback image
+    }
+  }
 }
