@@ -25,7 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> citySuggestions = [];
   bool isLoadingSuggestions = false;
 
-  getWeather() async {
+  /// A method to get the weather based on the user's location and provide a 5-day forecast
+  void getWeather() async {
     Position position = await LocationService.getCurrentLocation();
 
     latitude = position.latitude;
@@ -33,11 +34,13 @@ class _HomeScreenState extends State<HomeScreen> {
     WeatherService.getWeather(latitude, longitude).then((value) {
       setState(() {
         weatherData = value;
+        /// Fetch the 5-day forecast using the user's coordinates
         _weekForecast = WeatherService.get5DayForecast(latitude, longitude);
       });
     });
   }
 
+  /// A method to handle changes in the search bar
   void _onSearchControllerChanged() async {
     final value = _searchController.text;
 
@@ -86,84 +89,66 @@ class _HomeScreenState extends State<HomeScreen> {
       home: Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(60.0),
-          child: Stack(children: [
-            AppBar(
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    isLightTheme ? Icons.dark_mode : Icons.brightness_6,
-                    color: isLightTheme ? Colors.black : Colors.white,
-                    size: 40.0,
+          child: Stack(
+            children: [
+              AppBar(
+                actions: <Widget>[
+                  IconButton(
+                    icon: Icon(
+                      isLightTheme ? Icons.dark_mode : Icons.brightness_6,
+                      color: isLightTheme ? Colors.black : Colors.white,
+                      size: 40.0,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isLightTheme = !isLightTheme;
+                      });
+                    },
                   ),
-                  onPressed: () {
+                ],
+              ),
+              Positioned(
+                top: 60,
+                left: 20,
+                right: 20,
+                bottom: 0,
+                child: AnimSearchBar(
+                  closeSearchOnSuffixTap: true,
+                  textController: _searchController,
+                  helpText: 'Search for a city',
+                  width: 370,
+                  onSuffixTap: () {
                     setState(() {
-                      isLightTheme = !isLightTheme;
+                      _searchController.clear();
+                      citySuggestions.clear();
+                    });
+                  },
+                  onSubmitted: (value) {
+                    /// When the user submits, fetch weather for the selected city
+                    WeatherService.getWeatherByCity(value).then((weather) {
+                      setState(() {
+                        /// Get the weather data for the selected city
+                        weatherData = weather;
+                        latitude = weather.latitude;
+                        longitude = weather.longitude;
+
+                        /// Fetch the 5-day forecast using the new city's coordinates
+                        _weekForecast = WeatherService.get5DayForecast(latitude, longitude);
+                      });
+                      setState(() {
+                        citySuggestions.clear();
+
+                        /// Clear city suggestions
+                        _searchController.clear();
+
+                        /// Clear search bar after fetching weather
+                      });
                     });
                   },
                 ),
-              ],
-            ),
-            Positioned(
-              top: 60,
-              left: 20,
-              right: 20,
-              bottom: 0,
-              child: AnimSearchBar(
-                textController: _searchController,
-                helpText: 'Search for a city',
-                width: 370,
-                onSuffixTap: () {
-                  _searchController.clear();
-                  setState(() {
-                    citySuggestions.clear(); /// Clear suggestions when search is cleared
-                  });
-                },
-                onSubmitted: (value) {
-                  /// When the user submits, fetch weather for the selected city
-                  WeatherService.getWeatherByCity(value).then((weather) {
-                    setState(() {
-                      weatherData = weather;
-                      // Update latitude and longitude for the selected city
-                      latitude = weather.latitude;  // Make sure you add latitude to your WeatherData model
-                      longitude = weather.longitude;  // Make sure you add longitude to your WeatherData model
-                      // Fetch the 5-day forecast using the new city's coordinates
-                      _weekForecast = WeatherService.get5DayForecast(latitude, longitude);
-                    });
-                    _searchController.clear(); /// Clear search bar after fetching weather
-                    setState(() {
-                      citySuggestions.clear(); /// Clear city suggestions
-                    });
-                  });
-                },
               ),
-            ),
-            if (citySuggestions.isNotEmpty)
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: citySuggestions.length,
-                itemBuilder: (context, index) {
-                  final city = citySuggestions[index];
-                  return ListTile(
-                    title: Center(
-                      child: Text(
-                        '${city['name']}, ${city['country']}',
-                      ),
-                    ),
-                    onTap: () {
-                      _searchController.text = city['name'];
-                      /// Fetch weather for the selected city
-                      WeatherService.getWeatherByCity(city['name']).then((weather) {
-                        setState(() {
-                          weatherData = weather;
-                          _weekForecast = WeatherService.get5DayForecast(latitude, longitude);
-                          citySuggestions.clear(); /// Clear suggestions after selecting
-                        });
-                      });
-                    },
-                  );
-                },
-              ),
-          ]),
+            ],
+          ),
         ),
         body: weatherData == null
             ? const Center(
@@ -175,6 +160,54 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    if (citySuggestions.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: citySuggestions.length,
+                          itemBuilder: (context, index) {
+                            final city = citySuggestions[index];
+                            return ListTile(
+                              title: Center(
+                                child: Text(
+                                  '${city['name']}, ${city['country']}',
+                                ),
+                              ),
+                              onTap: () {
+                                /// Temporarily remove the listener to avoid triggering suggestions again
+                                _searchController.removeListener(_onSearchControllerChanged);
+
+                                /// Set the selected city to the search bar text
+                                _searchController.text = city['name'];
+
+                                /// Clear suggestions and reattach the listener immediately
+                                setState(() {
+                                  citySuggestions.clear();
+                                });
+
+                                /// Reattach the listener after setting the text
+                                _searchController.addListener(_onSearchControllerChanged);
+
+                                /// Fetch weather data asynchronously
+                                WeatherService.getWeatherByCity(city['name']).then((weather) {
+                                  setState(() {
+                                    weatherData = weather;
+                                    _weekForecast = WeatherService.get5DayForecast(weather.latitude, weather.longitude);
+                                  });
+                                });
+
+                                /// Dismiss the search bar's focus after selecting a city
+                                final FocusScopeNode currentScope = FocusScope.of(context);
+
+                                if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                }
+                              },
+                            );
+                          },
+                        ),
+                      ),
                     Center(
                       child: Text(
                         '📍 ${weatherData?.cityName}',
