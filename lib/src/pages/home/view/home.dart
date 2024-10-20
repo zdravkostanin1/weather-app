@@ -85,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double searchBarWidth = MediaQuery.of(context).size.width; - themeIconWidth - iconPadding - actionsPadding;
+    double searchBarWidth = MediaQuery.of(context).size.width - themeIconWidth - iconPadding - actionsPadding;
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
