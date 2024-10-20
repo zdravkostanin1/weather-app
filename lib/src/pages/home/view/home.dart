@@ -7,6 +7,7 @@ import 'package:weather_app/services/location_service.dart';
 import 'package:weather_app/services/weather_service.dart';
 import 'package:weather_app/src/models/weather_data.dart';
 import 'package:weather_app/src/pages/home/widgets/rounded_container.dart';
+import 'package:weather_app/src/utils/constants.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -84,6 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double searchBarWidth = MediaQuery.of(context).size.width; - themeIconWidth - iconPadding - actionsPadding;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: isLightTheme ? ThemeData.light() : ThemeData.dark(),
@@ -99,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     closeSearchOnSuffixTap: true,
                     textController: _searchController,
                     helpText: 'Search for a city',
-                    width: 340,
+                    width: searchBarWidth,
                     onSuffixTap: () {
                       setState(() {
                         _searchController.clear();
@@ -130,18 +133,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       });
                     },
                   ),
-                  // IconButton(
-                  //   icon: Icon(
-                  //     isLightTheme ? Icons.dark_mode : Icons.brightness_6,
-                  //     color: isLightTheme ? Colors.black : Colors.white,
-                  //     size: 40.0,
-                  //   ),
-                  //   onPressed: () {
-                  //     setState(() {
-                  //       isLightTheme = !isLightTheme;
-                  //     });
-                  //   },
-                  // ),
                   const SizedBox(width: 10.0),
                   ClipOval(
                     child: Material(
@@ -166,46 +157,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(width: 10.0),
                 ],
               ),
-              // Positioned(
-              //   top: 60,
-              //   left: 20,
-              //   right: 20,
-              //   bottom: 0,
-              //   child: AnimSearchBar(
-              //     closeSearchOnSuffixTap: true,
-              //     textController: _searchController,
-              //     helpText: 'Search for a city',
-              //     width: 370,
-              //     onSuffixTap: () {
-              //       setState(() {
-              //         _searchController.clear();
-              //         citySuggestions.clear();
-              //       });
-              //     },
-              //     onSubmitted: (value) {
-              //       /// When the user submits, fetch weather for the selected city
-              //       WeatherService.getWeatherByCity(value).then((weather) {
-              //         setState(() {
-              //           /// Get the weather data for the selected city
-              //           weatherData = weather;
-              //           latitude = weather.latitude;
-              //           longitude = weather.longitude;
-              //
-              //           /// Fetch the 5-day forecast using the new city's coordinates
-              //           _weekForecast = WeatherService.get5DayForecast(latitude, longitude);
-              //         });
-              //         setState(() {
-              //           citySuggestions.clear();
-              //
-              //           /// Clear city suggestions
-              //           _searchController.clear();
-              //
-              //           /// Clear search bar after fetching weather
-              //         });
-              //       });
-              //     },
-              //   ),
-              // ),
             ],
           ),
         ),
