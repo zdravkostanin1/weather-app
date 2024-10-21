@@ -38,6 +38,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _toggleTheme() {
+    setState(() {
+      isLightTheme = !isLightTheme;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -98,11 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Material(
                             color: isLightTheme ? Colors.black : Colors.white,
                             child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  isLightTheme = !isLightTheme;
-                                });
-                              },
+                              onTap: _toggleTheme,
                               child: SizedBox(
                                 width: 47,
                                 height: 47,
