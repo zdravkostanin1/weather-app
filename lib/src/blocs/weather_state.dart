@@ -5,14 +5,14 @@ sealed class WeatherState extends Equatable {
   final double? latitude;
   final double? longitude;
   final List<WeatherData>? fiveDayForecast;
-  final List<Map<String, dynamic>>? citySuggestions;
+  final List<Map<String, dynamic>> citySuggestions;
 
   const WeatherState({
     this.weatherData,
     this.latitude,
     this.longitude,
     this.fiveDayForecast,
-    this.citySuggestions,
+    this.citySuggestions = const [],
   });
 }
 
