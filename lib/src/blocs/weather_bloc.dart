@@ -36,9 +36,16 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
   }
 
   FutureOr<void> _onFetchWeatherByCity(FetchWeatherByCity event, Emitter<WeatherState> emit) async {
-    final newWeatherData = await WeatherService.getWeatherByCity(event.cityName);
+    try {
+      final newWeatherData = await WeatherService.getWeatherByCity(event.cityName);
 
-    emit(WeatherFetched(weatherData: await WeatherService.getWeatherByCity(event.cityName), fiveDayForecast: await WeatherService.get5DayForecast(newWeatherData.latitude, newWeatherData.longitude)));
+      emit(WeatherFetched(weatherData: newWeatherData, fiveDayForecast: await WeatherService.get5DayForecast(newWeatherData.latitude, newWeatherData.longitude)));
+    } catch (e) {
+      /// If the city typed is not existing, return the current weather and the 5-day forecast.
+      if (e.toString() == 'Failed to fetch weather for city.') {
+        emit(WeatherFetched(weatherData: state.weatherData, fiveDayForecast: state.fiveDayForecast));
+      }
+    }
   }
 
   FutureOr<void> _onFetchCitySuggestions(FetchCitySuggestions event, Emitter<WeatherState> emit) async {

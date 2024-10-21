@@ -46,7 +46,7 @@ class WeatherService {
         final json = jsonDecode(response.body);
         return WeatherData.fromJson(json);
       } else {
-        throw Exception('Failed to get weather for $cityName');
+        throw Exception('Failed to get weather for city.');
       }
     } catch (e) {
       throw Exception('An exception occurred: $e');
