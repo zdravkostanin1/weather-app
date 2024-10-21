@@ -29,3 +29,15 @@ final class WeatherFetched extends WeatherState {
   @override
   List<Object?> get props => [weatherData, fiveDayForecast, citySuggestions];
 }
+
+final class LocationPermissionDeniedState extends WeatherState {
+
+  @override
+  List<Object> get props => [];
+}
+
+final class LocationPermissionPermanentlyDeniedState extends WeatherState {
+
+  @override
+  List<Object> get props => [];
+}

@@ -9,13 +9,13 @@ class LocationService {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         /// Permissions are denied, next time you could try requesting permissions again
-        return Future.error('Location permissions are denied');
+        throw Exception('Location permissions are denied');
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
       /// Permissions are denied forever
-      return Future.error('Location permissions are permanently denied, we cannot request permissions');
+      throw Exception('Location permissions are permanently denied');
     }
   }
 

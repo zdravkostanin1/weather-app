@@ -136,6 +136,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: isLightTheme ? Colors.black : Colors.white,
                 ),
               );
+            } else if (state is LocationPermissionDeniedState || state is LocationPermissionPermanentlyDeniedState) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(child: Image.asset('assets/images/map.png', width: 180.0, height: 180.0)),
+                  Text(
+                    'Whoops! We need your location to get the weather.',
+                    style: GoogleFonts.roboto(
+                      fontSize: 14.0,
+                    ),
+                  ),
+                ],
+              );
             } else if (state is WeatherFetched) {
               return SingleChildScrollView(
                 child: Column(
@@ -146,9 +159,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.all(8.0),
                         child: ListView.builder(
                           shrinkWrap: true,
-                          itemCount: state.citySuggestions!.length,
+                          itemCount: state.citySuggestions.length,
                           itemBuilder: (context, index) {
-                            final city = state.citySuggestions![index];
+                            final city = state.citySuggestions[index];
                             return ListTile(
                               title: Center(
                                 child: Text(

@@ -19,11 +19,20 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
   }
 
   Future<void> _onFetchWeatherByLocation(FetchWeatherByLocation event, Emitter<WeatherState> emit) async {
-    Position position = await LocationService.getCurrentLocation();
-    double latitude = position.latitude;
-    double longitude = position.longitude;
+    try {
+      Position position = await LocationService.getCurrentLocation();
+      double latitude = position.latitude;
+      double longitude = position.longitude;
 
-    emit(WeatherFetched(weatherData: await WeatherService.getWeather(latitude, longitude), fiveDayForecast: await WeatherService.get5DayForecast(latitude, longitude)));
+      emit(WeatherFetched(weatherData: await WeatherService.getWeather(latitude, longitude), fiveDayForecast: await WeatherService.get5DayForecast(latitude, longitude)));
+    } catch (e) {
+      /// Handle different errors, such as permission issues or other location errors
+      if (e.toString().contains('Location permissions are denied')) {
+        emit(LocationPermissionDeniedState());
+      } else if (e.toString().contains('Location permissions are permanently denied')) {
+        emit(LocationPermissionPermanentlyDeniedState());
+      } else {}
+    }
   }
 
   FutureOr<void> _onFetchWeatherByCity(FetchWeatherByCity event, Emitter<WeatherState> emit) async {
