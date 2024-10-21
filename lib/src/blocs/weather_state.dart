@@ -6,7 +6,6 @@ sealed class WeatherState extends Equatable {
   final double? longitude;
   final List<WeatherData>? weekForecast;
   final List<Map<String, dynamic>>? citySuggestions;
-  final bool? isLoadingSuggestions;
 
   const WeatherState({
     this.weatherData,
@@ -14,7 +13,6 @@ sealed class WeatherState extends Equatable {
     this.longitude,
     this.weekForecast,
     this.citySuggestions,
-    this.isLoadingSuggestions,
   });
 }
 
@@ -26,8 +24,8 @@ final class WeatherInitial extends WeatherState {
 
 final class WeatherFetched extends WeatherState {
 
-  const WeatherFetched({required WeatherData super.weatherData, super.weekForecast});
+  const WeatherFetched({super.citySuggestions, super.weatherData, super.weekForecast});
 
   @override
-  List<Object?> get props => [weatherData, weekForecast];
+  List<Object?> get props => [weatherData, weekForecast, citySuggestions];
 }

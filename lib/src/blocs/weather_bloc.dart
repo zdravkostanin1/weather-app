@@ -16,6 +16,7 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
     on<FetchWeatherByLocation>(_onFetchWeatherByLocation);
     on<FetchWeatherByCity>(_onFetchWeatherByCity);
     on<Fetch5DayForecast>(_onFetch5DayForecast);
+    on<FetchCitySuggestions>(_onFetchCitySuggestions);
   }
 
   Future<void> _onFetchWeatherByLocation(FetchWeatherByLocation event, Emitter<WeatherState> emit) async {
@@ -27,8 +28,16 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
   }
 
   FutureOr<void> _onFetchWeatherByCity(FetchWeatherByCity event, Emitter<WeatherState> emit) async {
-    emit(WeatherFetched(weatherData: await WeatherService.getWeatherByCity(event.cityName), weekForecast: await WeatherService.get5DayForecast(event.latitude, event.longitude)));
+    final newWeatherData = await WeatherService.getWeatherByCity(event.cityName);
+
+    emit(WeatherFetched(weatherData: await WeatherService.getWeatherByCity(event.cityName), weekForecast: await WeatherService.get5DayForecast(newWeatherData.latitude, newWeatherData.longitude)));
   }
 
   FutureOr<void> _onFetch5DayForecast(Fetch5DayForecast event, Emitter<WeatherState> emit) {}
+
+  FutureOr<void> _onFetchCitySuggestions(FetchCitySuggestions event, Emitter<WeatherState> emit) async {
+    final suggestions = await WeatherService.getCitySuggestions(event.query);
+
+    emit(WeatherFetched(weatherData: state.weatherData, citySuggestions: suggestions, weekForecast: state.weekForecast));
+  }
 }

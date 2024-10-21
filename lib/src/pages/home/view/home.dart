@@ -1,10 +1,8 @@
 import 'package:anim_search_bar/anim_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:weather_app/services/location_service.dart';
 import 'package:weather_app/services/weather_service.dart';
 import 'package:weather_app/src/blocs/weather_bloc.dart';
 import 'package:weather_app/src/models/weather_data.dart';
@@ -19,82 +17,43 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  WeatherData? weatherData;
   double latitude = 0.0;
   double longitude = 0.0;
   bool isLightTheme = true;
-  late Future<List<WeatherData>> _weekForecast;
   final TextEditingController _searchController = TextEditingController();
-  List<Map<String, dynamic>> citySuggestions = [];
-  bool isLoadingSuggestions = false;
 
   /// A method to get the weather based on the user's location and provide a 5-day forecast
-  void getWeather() {
+  void _getWeather() {
     context.read<WeatherBloc>().add(FetchWeatherByLocation(latitude, longitude));
-
-    // Position position = await LocationService.getCurrentLocation();
-    //
-    // latitude = position.latitude;
-    // longitude = position.longitude;
-    // WeatherService.getWeather(latitude, longitude).then((value) {
-    //   setState(() {
-    //     weatherData = value;
-    //
-    //     /// Fetch the 5-day forecast using the user's coordinates
-    //     _weekForecast = WeatherService.get5DayForecast(latitude, longitude);
-    //   });
-    // });
   }
 
-  /// A method to handle changes in the search bar
-  void _onSearchControllerChanged() async {
+  /// A method to search for a city based on the user's input in the search bar
+  void _onSearchForCity() async {
     final value = _searchController.text;
 
     if (value.isNotEmpty) {
-      setState(() {
-        isLoadingSuggestions = true;
-      });
-      try {
-        final suggestions = await WeatherService.getCitySuggestions(value);
-        setState(() {
-          citySuggestions = suggestions;
-          isLoadingSuggestions = false;
-        });
-      } catch (e) {
-        setState(() {
-          citySuggestions = [];
-          isLoadingSuggestions = false;
-        });
-      }
-    } else {
-      setState(() {
-        citySuggestions = [];
-      });
+      context.read<WeatherBloc>().add(FetchCitySuggestions(value));
     }
   }
 
   @override
   void initState() {
     super.initState();
-    getWeather();
-    _searchController.addListener(_onSearchControllerChanged);
-    context.read<WeatherBloc>().add(FetchWeatherByLocation(latitude, longitude));
+    _getWeather();
+    _searchController.addListener(_onSearchForCity);
   }
 
   @override
   void dispose() {
     super.dispose();
-    _searchController.removeListener(_onSearchControllerChanged);
+    _searchController.removeListener(_onSearchForCity);
     _searchController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     /// This is the search bar's width
-    double searchBarWidth = MediaQuery.of(context).size.width -
-        themeIconWidth -
-        iconPadding -
-        actionsPadding;
+    double searchBarWidth = MediaQuery.of(context).size.width - themeIconWidth - iconPadding - actionsPadding;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: isLightTheme ? ThemeData.light() : ThemeData.dark(),
@@ -117,15 +76,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           onSuffixTap: () {
                             setState(() {
                               _searchController.clear();
-                              citySuggestions.clear();
+                              // citySuggestions.clear();
                             });
                           },
                           onSubmitted: (value) {
-                            // latitude = state.weatherData!.latitude;
-                            // longitude = state.weatherData!.longitude;
-                            // context.read<WeatherBloc>().add(FetchWeatherByCity(value, latitude, longitude));
+                            latitude = state.weatherData!.latitude;
+                            longitude = state.weatherData!.longitude;
+                            /// When the user submits, fetch weather for the selected city
+                            context.read<WeatherBloc>().add(FetchWeatherByCity(value, latitude, longitude));
                             // citySuggestions.clear();
-                            // _searchController.clear();
+                            _searchController.clear();
                             /// When the user submits, fetch weather for the selected city
                             // WeatherService.getWeatherByCity(value).then((weather) {
                             //   setState(() {
@@ -194,14 +154,14 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  if (citySuggestions.isNotEmpty)
+                  if (state.citySuggestions != null)
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ListView.builder(
                         shrinkWrap: true,
-                        itemCount: citySuggestions.length,
+                        itemCount: state.citySuggestions!.length,
                         itemBuilder: (context, index) {
-                          final city = citySuggestions[index];
+                          final city = state.citySuggestions![index];
                           return ListTile(
                             title: Center(
                               child: Text(
@@ -209,21 +169,24 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             onTap: () {
-                              // /// Temporarily remove the listener to avoid triggering suggestions again
-                              // _searchController.removeListener(_onSearchControllerChanged);
-                              //
-                              // /// Set the selected city to the search bar text
-                              // _searchController.text = city['name'];
-                              //
-                              // /// Clear suggestions and reattach the listener immediately
+                              /// Temporarily remove the listener to avoid triggering suggestions again
+                              _searchController.removeListener(_onSearchForCity);
+                              /// Set the selected city to the search bar text
+                              _searchController.text = city['name'];
+
+                              /// Clear suggestions and reattach the listener immediately
                               // setState(() {
-                              //   citySuggestions.clear();
+                                //citySuggestions.clear();
                               // });
                               //
-                              // /// Reattach the listener after setting the text
-                              // _searchController.addListener(_onSearchControllerChanged);
+                              /// Reattach the listener after setting the text
+                              _searchController.addListener(_onSearchForCity);
+
                               //
                               // /// Fetch weather data asynchronously
+                              context.read<WeatherBloc>().add(FetchWeatherByCity(city['name'], state.weatherData!.latitude, state.weatherData!.longitude));                            _searchController.clear();
+                              // _searchController.clear();
+
                               // WeatherService.getWeatherByCity(city['name']).then((weather) {
                               //   setState(() {
                               //     weatherData = weather;
@@ -231,12 +194,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               //   });
                               // });
                               //
-                              // /// Dismiss the search bar's focus after selecting a city
-                              // final FocusScopeNode currentScope = FocusScope.of(context);
-                              //
-                              // if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-                              //   FocusManager.instance.primaryFocus?.unfocus();
-                              // }
+                              /// Dismiss the search bar's focus after selecting a city
+                              final FocusScopeNode currentScope = FocusScope.of(context);
+
+                              if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                              }
                             },
                           );
                         },

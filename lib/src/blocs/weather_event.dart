@@ -34,3 +34,12 @@ final class Fetch5DayForecast extends WeatherEvent {
   @override
   List<Object> get props => [latitude, longitude];
 }
+
+final class FetchCitySuggestions extends WeatherEvent {
+  final String query;
+
+  const FetchCitySuggestions(this.query);
+
+  @override
+  List<Object> get props => [query];
+}
