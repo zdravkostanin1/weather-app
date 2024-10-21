@@ -15,7 +15,6 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
     on<WeatherEvent>((event, emit) {});
     on<FetchWeatherByLocation>(_onFetchWeatherByLocation);
     on<FetchWeatherByCity>(_onFetchWeatherByCity);
-    on<Fetch5DayForecast>(_onFetch5DayForecast);
     on<FetchCitySuggestions>(_onFetchCitySuggestions);
   }
 
@@ -24,20 +23,23 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
     double latitude = position.latitude;
     double longitude = position.longitude;
 
-    emit(WeatherFetched(weatherData: await WeatherService.getWeather(latitude, longitude), weekForecast: await WeatherService.get5DayForecast(latitude, longitude)));
+    emit(WeatherFetched(weatherData: await WeatherService.getWeather(latitude, longitude), fiveDayForecast: await WeatherService.get5DayForecast(latitude, longitude)));
   }
 
   FutureOr<void> _onFetchWeatherByCity(FetchWeatherByCity event, Emitter<WeatherState> emit) async {
     final newWeatherData = await WeatherService.getWeatherByCity(event.cityName);
 
-    emit(WeatherFetched(weatherData: await WeatherService.getWeatherByCity(event.cityName), weekForecast: await WeatherService.get5DayForecast(newWeatherData.latitude, newWeatherData.longitude)));
+    emit(WeatherFetched(weatherData: await WeatherService.getWeatherByCity(event.cityName), fiveDayForecast: await WeatherService.get5DayForecast(newWeatherData.latitude, newWeatherData.longitude)));
   }
 
-  FutureOr<void> _onFetch5DayForecast(Fetch5DayForecast event, Emitter<WeatherState> emit) {}
-
   FutureOr<void> _onFetchCitySuggestions(FetchCitySuggestions event, Emitter<WeatherState> emit) async {
-    final suggestions = await WeatherService.getCitySuggestions(event.query);
+    /// If the query is empty, return an empty list of suggestions. E.g. user has cleared the search and has not selected a city...
+    if (event.query == null || event.query!.isEmpty) {
+      emit(WeatherFetched(weatherData: state.weatherData, citySuggestions: const [], fiveDayForecast: state.fiveDayForecast));
+    } else {
+      final suggestions = await WeatherService.getCitySuggestions(event.query);
 
-    emit(WeatherFetched(weatherData: state.weatherData, citySuggestions: suggestions, weekForecast: state.weekForecast));
+      emit(WeatherFetched(weatherData: state.weatherData, citySuggestions: suggestions, fiveDayForecast: state.fiveDayForecast));
+    }
   }
 }

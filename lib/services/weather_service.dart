@@ -22,7 +22,7 @@ class WeatherService {
   }
 
   /// A method to get the weather suggestions based on the user's query in the search bar
-  static Future<List<Map<String, dynamic>>> getCitySuggestions(String query) async {
+  static Future<List<Map<String, dynamic>>> getCitySuggestions(String? query) async {
     final response = await http.get(Uri.parse(
       'http://api.openweathermap.org/geo/1.0/direct?q=$query&limit=5&appid=af234654c5eb2a7d6365d343588bf317',
     ));

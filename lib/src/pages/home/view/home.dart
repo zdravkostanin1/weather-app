@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// A method to search for a city based on the user's input in the search bar
-  void _onSearchForCity() async {
+  void _getWeatherForCity() async {
     final value = _searchController.text;
 
     if (value.isNotEmpty) {
@@ -40,13 +40,13 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _getWeather();
-    _searchController.addListener(_onSearchForCity);
+    _searchController.addListener(_getWeatherForCity);
   }
 
   @override
   void dispose() {
     super.dispose();
-    _searchController.removeListener(_onSearchForCity);
+    _searchController.removeListener(_getWeatherForCity);
     _searchController.dispose();
   }
 
@@ -74,39 +74,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           helpText: 'Search for a city',
                           width: searchBarWidth,
                           onSuffixTap: () {
-                            setState(() {
-                              _searchController.clear();
-                              // citySuggestions.clear();
-                            });
+                            _searchController.clear();
+                            context.read<WeatherBloc>().add(FetchCitySuggestions(_searchController.text));
                           },
                           onSubmitted: (value) {
                             latitude = state.weatherData!.latitude;
                             longitude = state.weatherData!.longitude;
+
                             /// When the user submits, fetch weather for the selected city
                             context.read<WeatherBloc>().add(FetchWeatherByCity(value, latitude, longitude));
-                            // citySuggestions.clear();
                             _searchController.clear();
-                            /// When the user submits, fetch weather for the selected city
-                            // WeatherService.getWeatherByCity(value).then((weather) {
-                            //   setState(() {
-                            //     /// Get the weather data for the selected city
-                            //     weatherData = weather;
-                            //     latitude = weather.latitude;
-                            //     longitude = weather.longitude;
-                            //
-                            //     /// Fetch the 5-day forecast using the new city's coordinates
-                            //     _weekForecast = WeatherService.get5DayForecast(
-                            //         latitude, longitude);
-                            //   });
-                            //   setState(() {
-                            //     citySuggestions.clear();
-                            //
-                            //     /// Clear city suggestions
-                            //     _searchController.clear();
-                            //
-                            //     /// Clear search bar after fetching weather
-                            //   });
-                            // });
                           },
                         ),
                         const SizedBox(width: 10.0),
@@ -170,30 +147,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             onTap: () {
                               /// Temporarily remove the listener to avoid triggering suggestions again
-                              _searchController.removeListener(_onSearchForCity);
+                              _searchController.removeListener(_getWeatherForCity);
+
                               /// Set the selected city to the search bar text
                               _searchController.text = city['name'];
 
-                              /// Clear suggestions and reattach the listener immediately
-                              // setState(() {
-                                //citySuggestions.clear();
-                              // });
-                              //
                               /// Reattach the listener after setting the text
-                              _searchController.addListener(_onSearchForCity);
+                              _searchController.addListener(_getWeatherForCity);
 
-                              //
-                              // /// Fetch weather data asynchronously
-                              context.read<WeatherBloc>().add(FetchWeatherByCity(city['name'], state.weatherData!.latitude, state.weatherData!.longitude));                            _searchController.clear();
-                              // _searchController.clear();
+                              /// Fetch weather for the selected city
+                              context.read<WeatherBloc>().add(FetchWeatherByCity(city['name'], state.weatherData!.latitude, state.weatherData!.longitude));
+                              _searchController.clear();
 
-                              // WeatherService.getWeatherByCity(city['name']).then((weather) {
-                              //   setState(() {
-                              //     weatherData = weather;
-                              //     _weekForecast = WeatherService.get5DayForecast(weather.latitude, weather.longitude);
-                              //   });
-                              // });
-                              //
                               /// Dismiss the search bar's focus after selecting a city
                               final FocusScopeNode currentScope = FocusScope.of(context);
 
@@ -406,7 +371,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                       } else if (state is WeatherFetched) {
-                        List<WeatherData>? forecast = state.weekForecast;
+                        List<WeatherData>? forecast = state.fiveDayForecast;
                         return SizedBox(
                           height: 150.0,
                           child: ListView.builder(
@@ -418,7 +383,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 width: 100.0,
                                 margin: const EdgeInsets.only(left: 22.0, right: 22.0),
                                 decoration: BoxDecoration(
-                                  color: isLightTheme ? Colors.black : Colors.white,
+                                  color: isLightTheme
+                                      ? Colors.black
+                                      : Colors.white,
                                   borderRadius: BorderRadius.circular(10.0),
                                   border: Border.all(
                                     width: 1,
@@ -434,7 +401,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       style: GoogleFonts.roboto(
                                         fontSize: 20.0,
                                         fontWeight: FontWeight.bold,
-                                        color: isLightTheme ? Colors.white : Colors.black,
+                                        color: isLightTheme
+                                            ? Colors.white
+                                            : Colors.black,
                                       ),
                                     ),
                                     const SizedBox(height: 10.0),
@@ -449,7 +418,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       style: GoogleFonts.roboto(
                                         fontSize: 20.0,
                                         fontWeight: FontWeight.bold,
-                                        color: isLightTheme ? Colors.white : Colors.black,
+                                        color: isLightTheme
+                                            ? Colors.white
+                                            : Colors.black,
                                       ),
                                     ),
                                   ],
@@ -474,7 +445,8 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Text('No weather data available'),
             );
           }
-        }),
+        },
+        ),
       ),
     );
   }
