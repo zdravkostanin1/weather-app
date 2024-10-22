@@ -24,6 +24,9 @@ The app is built by using only Flutter and Dart and was crafted with 💙
 <a href="https://www.flaticon.com/free-stickers/map-location" title="map location stickers">Map location stickers created by vectorsmarket15 - Flaticon</a>
 
 <a href="https://www.flaticon.com/free-stickers/christmas" title="christmas stickers">Christmas stickers created by Meiliastudio - Flaticon</a>
+
 <a href="https://www.flaticon.com/free-stickers/storm" title="storm stickers">Storm stickers created by Meiliastudio - Flaticon</a>
+
 <a href="https://www.flaticon.com/free-stickers/climate" title="climate stickers">Climate stickers created by Manuel Viveros - Flaticon</a>
+
 <a href="https://www.flaticon.com/free-stickers/rainy" title="rainy stickers">Rainy stickers created by Prosymbols Premium - Flaticon</a>
