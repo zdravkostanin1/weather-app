@@ -2,7 +2,6 @@
 
 A sleek and intuitive weather app built with Flutter that provides real-time weather updates for your current location or any location of your choice. Designed with a clean and user-friendly interface, the app offers seamless navigation, allowing users to access accurate weather information easily.
 
-# APP SCREENSHOT
 ![weather_app_thumbnail](https://github.com/user-attachments/assets/77da9ea1-97c7-499d-9e0c-ad742bb64d41)
 
 # Features & Integrations:
