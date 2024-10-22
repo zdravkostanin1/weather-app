@@ -1,16 +1,19 @@
-# weather_app
+# Flutter mobile weather application
 
-A Flutter weather application.
+A sleek and intuitive weather app built with Flutter that provides real-time weather updates for your current location or any location of your choice. Designed with a clean and user-friendly interface, the app offers seamless navigation, allowing users to access accurate weather information easily.
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+# Features & Integrations:
+- B&W theme
+- Search city location
+- Current location's weather
+- OpenWeatherMap API integration
+- Weekly forecast
+- Responsive UI (on all devices)
+- BLoC (state management solution for the app)
 
-A few resources to get you started if this is your first Flutter project:
+The app is built by using only Flutter and Dart and was crafted with 💙
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+# ATTRIBUTION FOR ASSETS USED IN APP:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<a href="https://www.flaticon.com/free-stickers/sun" title="sun stickers">Sun stickers created by bukeicon - Flaticon</a>
