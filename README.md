@@ -1,4 +1,4 @@
-# Flutter mobile weather application
+# Flutter weather app
 
 A sleek and intuitive weather app built with Flutter that provides real-time weather updates for your current location or any location of your choice. Designed with a clean and user-friendly interface, the app offers seamless navigation, allowing users to access accurate weather information easily.
 
@@ -15,7 +15,7 @@ A sleek and intuitive weather app built with Flutter that provides real-time wea
 
 The app is built by using only Flutter and Dart and was crafted with 💙
 
-# ATTRIBUTION FOR ASSETS USED IN APP:
+# Attribution for assets used in app:
 
 <a href="https://www.flaticon.com/free-stickers/sun" title="sun stickers">Sun stickers created by bukeicon - Flaticon</a>
 <a href="https://www.flaticon.com/free-stickers/cloud-computing" title="cloud computing stickers">Cloud computing stickers created by Meiliastudio - Flaticon</a>
