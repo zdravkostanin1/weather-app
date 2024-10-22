@@ -18,8 +18,11 @@ The app is built by using only Flutter and Dart and was crafted with 💙
 # Attribution for assets used in app:
 
 <a href="https://www.flaticon.com/free-stickers/sun" title="sun stickers">Sun stickers created by bukeicon - Flaticon</a>
+
 <a href="https://www.flaticon.com/free-stickers/cloud-computing" title="cloud computing stickers">Cloud computing stickers created by Meiliastudio - Flaticon</a>
+
 <a href="https://www.flaticon.com/free-stickers/map-location" title="map location stickers">Map location stickers created by vectorsmarket15 - Flaticon</a>
+
 <a href="https://www.flaticon.com/free-stickers/christmas" title="christmas stickers">Christmas stickers created by Meiliastudio - Flaticon</a>
 <a href="https://www.flaticon.com/free-stickers/storm" title="storm stickers">Storm stickers created by Meiliastudio - Flaticon</a>
 <a href="https://www.flaticon.com/free-stickers/climate" title="climate stickers">Climate stickers created by Manuel Viveros - Flaticon</a>
